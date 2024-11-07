@@ -15,10 +15,13 @@ export default async function getTotalRevenue(storeId: string) {
     },
   });
 
-  const totlaRevenue = paidOrders.reduce((total: number, order) => {
-    const orderTotal = order.orderItems.reduce((total: number, orderItem) => {
-      return total + orderItem.product.price.toNumber();
-    }, 0);
+  const totlaRevenue = paidOrders.reduce((total: number, order: any) => {
+    const orderTotal = order.orderItems.reduce(
+      (total: number, orderItem: any) => {
+        return total + orderItem.product.price.toNumber();
+      },
+      0
+    );
     return total + orderTotal;
   }, 0);
 
