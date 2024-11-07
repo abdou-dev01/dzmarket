@@ -1,6 +1,7 @@
 "use client";
 
 import * as z from "zod";
+import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -17,8 +18,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 const StoreModal = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const storeModal = useStoreModal();
   const form = useForm<z.infer<typeof StoreSchema>>({
     resolver: zodResolver(StoreSchema),
@@ -27,7 +31,20 @@ const StoreModal = () => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof StoreSchema>) => {};
+  const onSubmit = async (values: z.infer<typeof StoreSchema>) => {
+    try {
+      setIsLoading(true);
+
+      const response = await axios.post("/api/stores", values);
+
+      window.location.assign(`/${response.data.id}`);
+    } catch (error) {
+      console.log("STORE_MODAL", error);
+      toast.error("Something went wrong!");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Modal
@@ -46,17 +63,27 @@ const StoreModal = () => {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="computer store" {...field} />
+                    <Input
+                      disabled={isLoading}
+                      placeholder="computer store"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <div className="pt-6 space-x-2 flex justify-end items-center">
-              <Button variant="outline" onClick={storeModal.onClose}>
+              <Button
+                disabled={isLoading}
+                variant="outline"
+                onClick={storeModal.onClose}
+              >
                 Cancel
               </Button>
-              <Button type="submit">Continue</Button>
+              <Button disabled={isLoading} type="submit">
+                Continue
+              </Button>
             </div>
           </form>
         </Form>
