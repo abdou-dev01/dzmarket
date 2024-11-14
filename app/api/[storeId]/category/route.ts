@@ -2,6 +2,28 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
+export async function GET(
+  request: Request,
+  { params }: { params: { storeId: string } }
+) {
+  try {
+    if (!params.storeId) {
+      return new NextResponse("storeId is required", { status: 400 });
+    }
+
+    const categories = await db.category.findMany({
+      where: {
+        storeId: params.storeId,
+      },
+    });
+
+    return NextResponse.json(categories);
+  } catch (error) {
+    console.log("[CATEGORIES_GET_ROUTE]", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+}
+
 export async function POST(
   request: Request,
   { params }: { params: { storeId: string } }
@@ -48,28 +70,6 @@ export async function POST(
     return NextResponse.json(category);
   } catch (error) {
     console.log("[CATEGORIES_POST_ROUTE]", error);
-    return new NextResponse("Internal Error", { status: 500 });
-  }
-}
-
-export async function GET(
-  request: Request,
-  { params }: { params: { storeId: string } }
-) {
-  try {
-    if (!params.storeId) {
-      return new NextResponse("storeId is required", { status: 400 });
-    }
-
-    const categories = await db.category.findMany({
-      where: {
-        storeId: params.storeId,
-      },
-    });
-
-    return NextResponse.json(categories);
-  } catch (error) {
-    console.log("[CATEGORIES_GET_ROUTE]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
