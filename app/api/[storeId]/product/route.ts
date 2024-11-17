@@ -21,8 +21,6 @@ export async function POST(
     const session = await auth();
     const user = session?.user;
 
-    console.log("from route", body);
-
     if (!user?.id) {
       return new NextResponse("Unauthenticated", { status: 401 });
     }

@@ -24,7 +24,8 @@ export default auth(async function middleware(req) {
   if (req.method === "OPTIONS") {
     return new Response(null, {
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin":
+          "https://dzmarket-store-git-master-abdous-projects-dde7fd30.vercel.app",
         "Access-Control-Allow-Methods": "GET, POST, DELETE, PUT, OPTIONS",
         "Access-Control-Allow-Headers": "Content-type, Authorization",
       },
