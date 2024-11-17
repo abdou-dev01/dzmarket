@@ -20,16 +20,16 @@ export default auth(async function middleware(req) {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoutes = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoutes = authRoutes.includes(nextUrl.pathname);
+  const origin = req.headers.get("origin");
 
   if (req.method === "OPTIONS") {
-    return new Response(null, {
-      headers: {
-        "Access-Control-Allow-Origin":
-          "https://dzmarket-store-git-master-abdous-projects-dde7fd30.vercel.app",
-        "Access-Control-Allow-Methods": "GET, POST, DELETE, PUT, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-type, Authorization",
-      },
-    });
+    const headers = new Headers();
+    headers.set("Access-Control-Allow-Origin", "*");
+    headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    headers.set("Access-Control-Allow-Credentials", "true");
+
+    return new Response(null, { headers });
   }
 
   if (isApiAuthRoute) return;

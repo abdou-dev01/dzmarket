@@ -3,14 +3,24 @@ import { stripe } from "@/lib/stripe";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+export const corsHeaders = (origin: string) => ({
+  "Access-Control-Allow-Origin": origin,
   "Access-Control-Allow-Methods": "GET, POST, DELETE, PUT, OPTIONS",
   "Access-Control-Allow-Headers": "Content-type, Authorization",
-};
+  "Access-Control-Allow-Credentials": "true", // Include credentials if needed
+});
 
-export async function OPTIONS() {
-  return NextResponse.json(null, { headers: corsHeaders });
+export async function OPTIONS(req: Request) {
+  const origin = req.headers.get("origin");
+
+  const headers = corsHeaders(
+    origin ===
+      "https://dzmarket-store-git-master-abdous-projects-dde7fd30.vercel.app"
+      ? origin
+      : "*"
+  );
+
+  return new NextResponse(null, { headers });
 }
 
 export async function POST(
@@ -18,6 +28,14 @@ export async function POST(
   { params }: { params: { storeId: string } }
 ) {
   const { productIds } = await request.json();
+  const origin = request.headers.get("origin");
+
+  const headers = corsHeaders(
+    origin ===
+      "https://dzmarket-store-git-master-abdous-projects-dde7fd30.vercel.app"
+      ? origin
+      : "*"
+  );
 
   if (!params.storeId) {
     return new NextResponse("Store ID is required", { status: 400 });
@@ -82,6 +100,6 @@ export async function POST(
   }
 
   return new NextResponse(JSON.stringify({ url: session.url }), {
-    headers: corsHeaders,
+    headers,
   });
 }
